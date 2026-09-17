@@ -1,7 +1,10 @@
-
 (() => {
+  "use strict";
+
+  const config = window.NTA_CONFIG || {};
   const menuBtn = document.querySelector('.menu-toggle');
   const mobileMenu = document.querySelector('.mobile-menu');
+
   menuBtn?.addEventListener('click', () => {
     const open = mobileMenu.classList.toggle('open');
     menuBtn.setAttribute('aria-expanded', String(open));
@@ -15,94 +18,190 @@
   ['utm_source','utm_medium','utm_campaign','utm_term','utm_content','gclid','fbclid'].forEach(k => {
     if (params.get(k)) campaign[k] = params.get(k);
   });
-  sessionStorage.setItem('ntaCampaign', JSON.stringify({...JSON.parse(sessionStorage.getItem('ntaCampaign')||'{}'), ...campaign}));
+  try {
+    sessionStorage.setItem('ntaCampaign', JSON.stringify({
+      ...JSON.parse(sessionStorage.getItem('ntaCampaign') || '{}'),
+      ...campaign
+    }));
+  } catch {}
 
   document.querySelectorAll('[data-multistep]').forEach(form => {
     const steps = [...form.querySelectorAll('.form-step')];
     const bars = [...form.querySelectorAll('.progress span')];
     let index = 0;
+
     const render = () => {
-      steps.forEach((s,i)=>s.classList.toggle('active', i===index));
-      bars.forEach((b,i)=>b.classList.toggle('active', i<=index));
-      form.querySelector('.form-step.active input, .form-step.active select, .form-step.active textarea')?.focus({preventScroll:true});
-      form.scrollIntoView({behavior:'smooth',block:'start'});
+      steps.forEach((s, i) => s.classList.toggle('active', i === index));
+      bars.forEach((b, i) => b.classList.toggle('active', i <= index));
+      form.querySelector('.form-step.active input:not([type="hidden"]), .form-step.active select, .form-step.active textarea')?.focus({ preventScroll: true });
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     };
+
     form.addEventListener('click', e => {
       const next = e.target.closest('[data-next]');
       const prev = e.target.closest('[data-prev]');
-      if(next){
+      if (next) {
         const current = steps[index];
-        const required = [...current.querySelectorAll('[required]')];
-        const invalid = required.find(el => !el.checkValidity());
-        if(invalid){ invalid.reportValidity(); return; }
-        index = Math.min(steps.length-1,index+1); render();
+        const invalid = [...current.querySelectorAll('input,select,textarea')].find(el => !el.checkValidity());
+        if (invalid) { invalid.reportValidity(); return; }
+        index = Math.min(steps.length - 1, index + 1);
+        render();
       }
-      if(prev){ index = Math.max(0,index-1); render(); }
+      if (prev) {
+        index = Math.max(0, index - 1);
+        render();
+      }
     });
   });
 
-  async function secureUpload(file, leadId, docType){
-    const r = await fetch('/api/carriers/upload-url', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({leadId, docType, fileName:file.name, contentType:file.type, size:file.size})
+  document.querySelectorAll('[data-toggle-target]').forEach(control => {
+    const target = document.querySelector(control.dataset.toggleTarget);
+    if (!target) return;
+    const update = () => {
+      let show = control.type === 'checkbox' ? control.checked : Boolean(control.value);
+      if (control.dataset.toggleInvert === 'true') show = !show;
+      target.hidden = !show;
+      target.querySelectorAll('input,select,textarea').forEach(el => {
+        if (el.dataset.conditionalRequired === 'true') el.required = show;
+      });
+    };
+    control.addEventListener('change', update);
+    update();
+  });
+
+  function formPayload(form) {
+    const fd = new FormData(form);
+    const payload = {};
+    for (const [key, value] of fd.entries()) {
+      if (value instanceof File) continue;
+      if (Object.prototype.hasOwnProperty.call(payload, key)) {
+        payload[key] = `${payload[key]}, ${value}`;
+      } else {
+        payload[key] = value;
+      }
+    }
+    form.querySelectorAll('input[type="checkbox"]').forEach(input => {
+      if (!Object.prototype.hasOwnProperty.call(payload, input.name)) payload[input.name] = false;
+      else if (input.value === 'on' || input.value === 'true') payload[input.name] = input.checked;
     });
-    if(!r.ok) throw new Error('Secure upload authorization failed');
-    const {uploadUrl, storageKey} = await r.json();
-    const put = await fetch(uploadUrl, {method:'PUT', body:file, headers:{'Content-Type':file.type}});
-    if(!put.ok) throw new Error('Secure document upload failed');
-    return storageKey;
+    payload.meta = {
+      submitted_at: new Date().toISOString(),
+      originating_page: location.pathname,
+      referrer: document.referrer || null,
+      campaign: (() => { try { return JSON.parse(sessionStorage.getItem('ntaCampaign') || '{}'); } catch { return {}; } })()
+    };
+    return payload;
   }
 
-  document.querySelectorAll('form[data-lead-form]').forEach(form => {
+  async function invoke(body) {
+    if (!config.functionUrl || !config.publishableKey) throw new Error('The NTA submission service is not configured.');
+    const res = await fetch(config.functionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': config.publishableKey,
+        'Authorization': `Bearer ${config.publishableKey}`
+      },
+      body: JSON.stringify(body)
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error) throw new Error(json.error || 'Submission failed.');
+    return json;
+  }
+
+  async function uploadCarrierDocument(file, applicationId, uploadToken, documentType) {
+    if (!window.NTASupabase) throw new Error('Secure upload service is unavailable.');
+    const auth = await invoke({
+      action: 'carrier_upload_url',
+      application_id: applicationId,
+      upload_token: uploadToken,
+      document_type: documentType,
+      file_name: file.name,
+      mime_type: file.type,
+      file_size: file.size
+    });
+
+    const { error } = await window.NTASupabase.storage
+      .from(config.carrierBucket)
+      .uploadToSignedUrl(auth.path, auth.token, file, { contentType: file.type });
+    if (error) throw error;
+
+    await invoke({
+      action: 'carrier_attach_document',
+      application_id: applicationId,
+      upload_token: uploadToken,
+      document_type: documentType,
+      file_name: file.name,
+      storage_path: auth.path,
+      mime_type: file.type,
+      file_size: file.size
+    });
+  }
+
+  document.querySelectorAll('form[data-nta-action]').forEach(form => {
     form.addEventListener('submit', async e => {
       e.preventDefault();
       const status = form.querySelector('.status');
-      const fd = new FormData(form);
-      const endpoint = form.dataset.endpoint;
-      const type = form.dataset.leadForm;
-      const payload = Object.fromEntries([...fd.entries()].filter(([k,v]) => !(v instanceof File)));
-      payload.meta = {
-        submitted_at:new Date().toISOString(),
-        lead_type:type,
-        originating_page:location.pathname,
-        referrer:document.referrer || null,
-        campaign:JSON.parse(sessionStorage.getItem('ntaCampaign')||'{}')
-      };
-      try{
-        status.className='status show'; status.textContent='Submitting…';
-        const create = await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-        if(!create.ok) throw new Error('Submission failed');
-        const result = await create.json().catch(()=>({}));
-        if(type==='carrier'){
-          const leadId = result.leadId;
-          if(!leadId) throw new Error('Carrier record was created without a secure upload identifier');
-          const uploads = {};
-          for(const input of form.querySelectorAll('input[type="file"]')){
-            if(input.files[0]) uploads[input.name] = await secureUpload(input.files[0],leadId,input.name);
-          }
-          if(Object.keys(uploads).length){
-            const attach = await fetch('/api/carriers/attach-documents',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({leadId,uploads})});
-            if(!attach.ok) throw new Error('Documents uploaded but could not be attached to the application');
+      const submit = form.querySelector('[type="submit"]');
+      const action = form.dataset.ntaAction;
+      const payload = { action, ...formPayload(form) };
+
+      try {
+        if (status) {
+          status.className = 'status show';
+          status.textContent = action === 'carrier_apply' ? 'Creating carrier application…' : 'Submitting…';
+        }
+        if (submit) submit.disabled = true;
+
+        const result = await invoke(payload);
+
+        if (action === 'carrier_apply') {
+          const fileInputs = [...form.querySelectorAll('input[type="file"]')];
+          let uploaded = 0;
+          for (const input of fileInputs) {
+            const files = [...input.files];
+            for (const file of files) {
+              if (status) status.textContent = `Uploading secure document ${uploaded + 1}…`;
+              await uploadCarrierDocument(file, result.id, result.upload_token, input.name);
+              uploaded++;
+            }
           }
         }
-        status.className='status show success';
-        status.textContent='Thank you. Your information has been received and NTA Logistics can follow up using your preferred contact method.';
+
+        if (status) {
+          status.className = 'status show success';
+          status.innerHTML = `<strong>Received successfully.</strong><br>Your NTA reference number is <span class="reference-number">${escapeHtml(result.reference_number || '')}</span>. Keep this number for your records.`;
+        }
         form.reset();
-      }catch(err){
-        status.className='status show error';
-        status.textContent='This demo package is ready for backend integration, but the production API endpoint is not connected yet. Your information was not sent.';
+        form.querySelectorAll('[data-toggle-target]').forEach(el => el.dispatchEvent(new Event('change')));
+      } catch (err) {
+        if (status) {
+          status.className = 'status show error';
+          status.textContent = err?.message || 'We could not submit your information. Please try again.';
+        }
+      } finally {
+        if (submit) submit.disabled = false;
       }
     });
   });
 
-  const postsRoot=document.querySelector('[data-blog-posts]');
-  if(postsRoot){
-    fetch('content/posts.json').then(r=>r.json()).then(posts=>{
-      postsRoot.innerHTML=posts.map(p=>`
-      <article class="post-card">
-        <div class="thumb">${p.category}</div>
-        <div class="body"><small>${p.category} · ${p.publish_date}</small><h3>${p.title}</h3><p>${p.excerpt}</p><a href="${p.slug}.html">Read article →</a></div>
-      </article>`).join('');
-    }).catch(()=>{});
+  function escapeHtml(value) {
+    return String(value ?? '')
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
+
+  const postsRoot = document.querySelector('[data-blog-posts]');
+  if (postsRoot) {
+    fetch('content/posts.json').then(r => r.json()).then(posts => {
+      postsRoot.innerHTML = posts.map(p => `
+        <article class="post-card">
+          <div class="thumb">${escapeHtml(p.category)}</div>
+          <div class="body"><small>${escapeHtml(p.category)} · ${escapeHtml(p.publish_date)}</small><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.excerpt)}</p>${String(p.publish_date).toLowerCase() === 'draft' ? '<span class="draft-label">Article coming soon</span>' : `<a href="${encodeURI(p.slug)}.html">Read article →</a>`}</div>
+        </article>`).join('');
+    }).catch(() => {});
   }
 })();
