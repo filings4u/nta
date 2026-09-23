@@ -300,17 +300,41 @@
       download.removeAttribute('aria-disabled');
     };
 
+    const lockCards = () => {
+      cards.forEach(card => {
+        const state = card.querySelector('[data-doc-state]');
+        const view = card.querySelector('[data-doc-view]');
+        const download = card.querySelector('[data-doc-download]');
+        if (state) {
+          state.textContent = 'Locked — complete shipper credit application';
+          state.classList.add('pending');
+        }
+        if (view) {
+          view.href = '#';
+          view.removeAttribute('target');
+          view.setAttribute('aria-disabled', 'true');
+        }
+        if (download) {
+          download.href = '#';
+          download.removeAttribute('download');
+          download.setAttribute('aria-disabled', 'true');
+        }
+      });
+    };
+
     if (!reference) {
+      if (company) company.textContent = 'Shipper Package Locked';
+      if (referenceEl) referenceEl.textContent = 'Complete application';
       status.className = 'package-alert warning';
-      status.innerHTML = '<strong>Complete the Shipper Credit Application first.</strong><br>Your shipper package is unlocked after a successful application submission.';
-      cards.forEach(card => setCard(card, null));
+      status.innerHTML = '<strong>Complete the Shipper Credit Application to unlock this package.</strong><br>After a successful submission, you will be redirected here and your NTA shipper reference will unlock the View and Download buttons.';
+      lockCards();
     } else {
       if (referenceEl) referenceEl.textContent = reference;
-      status.textContent = 'Loading your NTA shipper package…';
+      status.textContent = 'Verifying your shipper application and loading current NTA documents…';
       invokeStorage({ action: 'shipper_package', reference_number: reference })
         .then(result => {
           const docsByName = Object.fromEntries((result.documents || []).map(doc => [String(doc.name).toLowerCase(), doc]));
-          if (company) company.textContent = result.shipper?.company_name || 'Approved shipper applicant';
+          if (company) company.textContent = result.shipper?.company_name || 'NTA Shipper Package';
           if (referenceEl) referenceEl.textContent = result.shipper?.reference_number || reference;
           cards.forEach(card => {
             const filename = String(card.dataset.packageDocument || '').toLowerCase();
@@ -318,14 +342,16 @@
           });
           const count = (result.documents || []).length;
           status.className = count ? 'package-alert success' : 'package-alert info';
-          status.innerHTML = count
-            ? `<strong>Your shipper package is ready.</strong><br>${count} document${count === 1 ? '' : 's'} currently available to view or download.`
-            : '<strong>Your application was received.</strong><br>NTA has not published package documents to the portal yet. The document cards below will activate automatically when the files are added.';
+          if (count) {
+            status.innerHTML = `<strong>Your shipper package is unlocked.</strong><br>${count} document${count === 1 ? '' : 's'} currently available to view or download.`;
+          } else {
+            status.innerHTML = '<strong>Your shipper account was verified, but no package documents are currently published.</strong>';
+          }
         })
         .catch(err => {
           status.className = 'package-alert warning';
-          status.textContent = err?.message || 'We could not load the shipper package.';
-          cards.forEach(card => setCard(card, null));
+          status.textContent = err?.message || 'We could not verify your shipper application.';
+          lockCards();
         });
     }
   }
