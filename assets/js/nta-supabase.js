@@ -6,6 +6,7 @@ window.NTA_CONFIG = Object.freeze({
   storageFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-storage",
   carrierSecureFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-carrier-secure",
   notifyFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-form-notify",
+  agentFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-agent-intake",
   adminFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-admin-api",
   blogFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-blog-public"
 });

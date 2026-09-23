@@ -231,8 +231,9 @@
   }
 
   async function invoke(body) {
-    if (!config.functionUrl || !config.publishableKey) throw new Error('The NTA submission service is not configured.');
-    const res = await fetch(config.functionUrl, {
+    const endpoint = body?.action === 'agent_apply' ? config.agentFunctionUrl : config.functionUrl;
+    if (!endpoint || !config.publishableKey) throw new Error('The NTA submission service is not configured.');
+    const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -416,7 +417,7 @@
           }
         }
 
-        await notifySubmission(action, result.id);
+        if (action !== 'agent_apply') await notifySubmission(action, result.id);
 
         if (status) {
           status.className = 'status show success';
