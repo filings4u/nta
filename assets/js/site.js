@@ -84,6 +84,50 @@
   });
 
 
+
+
+  // Link quote requests to a shipper credit application completed in this browser.
+  document.querySelectorAll('[data-quote-form]').forEach(form => {
+    const refInput = form.querySelector('[name="shipper_reference_number"]');
+    const profileStatus = document.querySelector('[data-quote-profile-status]');
+    let ref = '';
+    try {
+      if (sessionStorage.getItem('ntaShipperApplicationSubmitted') === 'true') {
+        ref = sessionStorage.getItem('ntaShipperReference') || '';
+      }
+    } catch {}
+    if (refInput && ref) refInput.value = ref;
+    if (profileStatus && ref) {
+      profileStatus.textContent = `Linked to ${ref}`;
+      profileStatus.classList.add('linked');
+    }
+
+    const updateReview = () => {
+      form.querySelectorAll('[data-review-field]').forEach(node => {
+        const input = form.querySelector(`[name="${node.dataset.reviewField}"]`);
+        let value = input?.value?.trim() || '—';
+        if (input?.type === 'date' && input.value) {
+          const d = new Date(`${input.value}T12:00:00`);
+          if (!Number.isNaN(d.getTime())) value = d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});
+        }
+        node.textContent = value;
+      });
+      const route = form.querySelector('[data-review-route]');
+      if (route) {
+        const pc = form.querySelector('[name="pickup_city"]')?.value.trim();
+        const ps = form.querySelector('[name="pickup_state"]')?.value.trim();
+        const dc = form.querySelector('[name="delivery_city"]')?.value.trim();
+        const ds = form.querySelector('[name="delivery_state"]')?.value.trim();
+        const origin = [pc,ps].filter(Boolean).join(', ');
+        const destination = [dc,ds].filter(Boolean).join(', ');
+        route.textContent = origin || destination ? `${origin || '—'} → ${destination || '—'}` : '—';
+      }
+    };
+    form.addEventListener('input', updateReview);
+    form.addEventListener('change', updateReview);
+    updateReview();
+  });
+
   document.querySelectorAll('.carrier-application-form').forEach(form => {
     const paymentMethod = form.querySelector('[name="payment_method"]');
     const panels = [...form.querySelectorAll('[data-payment-panel]')];
@@ -314,6 +358,33 @@
         const existingNotes = String(payload.notes || '').trim();
         payload.notes = [existingNotes, creditDetails.length ? `CREDIT APPLICATION DETAILS\n${creditDetails.join('\n')}` : '']
           .filter(Boolean).join('\n\n');
+      }
+
+
+      // Preserve useful quote details that are not first-class columns in the
+      // public quote table inside special_instructions so operations receives them.
+      if (action === 'quote_request') {
+        const quoteKeys = [
+          ['Customer / project reference', 'customer_reference'],
+          ['Quote type', 'quote_type'],
+          ['Pickup contact', 'pickup_contact_name'],
+          ['Pickup contact phone', 'pickup_contact_phone'],
+          ['Pickup loading method', 'pickup_loading_type'],
+          ['Pickup notes', 'pickup_notes'],
+          ['Delivery contact', 'delivery_contact_name'],
+          ['Delivery contact phone', 'delivery_contact_phone'],
+          ['Delivery unloading method', 'delivery_unloading_type'],
+          ['Delivery notes', 'delivery_notes']
+        ];
+        const quoteDetails = quoteKeys
+          .map(([label, key]) => [label, String(payload[key] ?? '').trim()])
+          .filter(([, value]) => value)
+          .map(([label, value]) => `${label}: ${value}`);
+        const existingInstructions = String(payload.special_instructions || '').trim();
+        payload.special_instructions = [
+          quoteDetails.length ? `QUOTE REQUEST DETAILS\n${quoteDetails.join('\n')}` : '',
+          existingInstructions
+        ].filter(Boolean).join('\n\n');
       }
 
       try {
