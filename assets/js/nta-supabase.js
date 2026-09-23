@@ -5,7 +5,9 @@ window.NTA_CONFIG = Object.freeze({
   carrierBucket: "NTA_logistics",
   storageFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-storage",
   carrierSecureFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-carrier-secure",
-  notifyFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-form-notify"
+  notifyFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-form-notify",
+  adminFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-admin-api",
+  blogFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-blog-public"
 });
 
 window.NTASupabase = window.supabase?.createClient
