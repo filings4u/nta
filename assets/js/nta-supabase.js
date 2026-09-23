@@ -4,6 +4,7 @@ window.NTA_CONFIG = Object.freeze({
   functionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-public-intake",
   carrierBucket: "NTA_logistics",
   storageFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-storage",
+  carrierSecureFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-carrier-secure",
   notifyFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-form-notify"
 });
 

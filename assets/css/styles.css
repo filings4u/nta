@@ -48,3 +48,38 @@
 .package-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.package-card{display:flex;flex-direction:column;min-height:310px;padding:26px;background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 12px 28px rgba(6,26,54,.05)}.package-card .doc-icon{width:50px;height:50px;border-radius:12px;background:#061a36;color:var(--gold2);display:grid;place-items:center;font-family:"Barlow Condensed";font-weight:800;font-size:1.15rem}.package-card h3{font-size:1.7rem;color:var(--navy);line-height:1;margin:22px 0 10px}.package-card p{color:var(--muted);font-size:.91rem;margin:0 0 20px}.doc-state{margin-top:auto;font-size:.75rem;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#7a8796}.doc-state.available{color:#237247}.doc-state.pending{color:#987110}.doc-actions{display:flex;gap:9px;margin-top:13px}.doc-actions .btn{flex:1;min-height:42px;padding:0 14px}.doc-actions a[aria-disabled="true"]{pointer-events:none;opacity:.42}.package-note{margin-top:28px;padding:22px;border:1px solid var(--line);border-radius:15px;background:#f8fafc;color:#526174}.package-note strong{color:var(--navy)}
 @media(max-width:980px){.package-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:680px){.package-summary{grid-template-columns:1fr}.package-reference{min-width:0}.package-grid{grid-template-columns:1fr}}
+
+
+/* Carrier application */
+.carrier-onboarding-hero{background-image:url('../images/carriers-hero.webp');background-position:center 54%}
+.carrier-application-form{width:100%;max-width:var(--max)}
+.carrier-progress-labels{grid-template-columns:repeat(7,1fr)}
+.carrier-document-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.carrier-document-grid .upload-row{background:#f8fafc;border:1px dashed #aab9c9;border-radius:14px;padding:20px;display:grid;gap:14px;align-content:start}
+.carrier-document-grid .upload-row label{display:grid;gap:4px;color:var(--navy)}
+.carrier-document-grid .upload-row label strong{font-size:1rem}
+.carrier-document-grid .upload-row label span{font-size:.86rem;color:var(--muted);font-weight:500}
+.carrier-document-grid .upload-row input[type=file]{width:100%;background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px}
+@media(max-width:780px){.carrier-document-grid{grid-template-columns:1fr}.carrier-progress-labels{display:none}}
+
+
+/* Carrier agreement + secure payment onboarding */
+.carrier-progress-labels-eight{grid-template-columns:repeat(8,1fr)}
+.payment-method-panel{margin-top:24px;padding:24px;border:1px solid var(--line);border-radius:16px;background:#f8fbff}
+.payment-method-panel[hidden]{display:none!important}
+.agreement-shell{margin:18px 0 24px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+.agreement-scroll{height:520px;overflow:auto;padding:30px 32px;background:#fbfcfe;color:#26364d;line-height:1.7;scrollbar-gutter:stable}
+.agreement-scroll h4{margin:26px 0 7px;color:var(--navy);font-size:1.05rem;text-transform:uppercase;letter-spacing:.02em}
+.agreement-scroll p{margin:0 0 12px;color:#43536a}
+.agreement-title{padding-bottom:22px;border-bottom:2px solid var(--gold);margin-bottom:20px;display:grid;gap:4px}
+.agreement-title>strong{font-family:"Barlow Condensed";font-size:1.65rem;color:var(--navy)}
+.agreement-title>span{font-size:.82rem;color:#607086}
+.agreement-title h3{font-family:"Barlow Condensed";font-size:2.3rem;color:var(--navy);margin:14px 0 0;text-transform:uppercase}
+.agreement-title p{font-size:.82rem;font-weight:800;color:var(--blue);text-transform:uppercase;letter-spacing:.06em}
+.agreement-end{margin-top:34px;padding:20px;border-radius:10px;background:var(--navy);color:#fff;display:grid;gap:5px;text-align:center}
+.agreement-end strong{color:var(--gold2);letter-spacing:.09em}
+.agreement-read-status{padding:14px 18px;border-top:1px solid var(--line);background:#f3f6fa;color:#56677d;font-weight:800;font-size:.87rem}
+.agreement-read-status.ready{background:#eaf7ef;color:#176337}
+.lock-dot{margin-right:8px;color:#a36c00}.agreement-read-status.ready .lock-dot{color:#1f8b4c}
+.agreement-signature-grid input:disabled{background:#eef2f6;color:#8996a7;cursor:not-allowed}
+@media(max-width:780px){.carrier-progress-labels-eight{display:none}.agreement-scroll{height:470px;padding:22px 18px}.payment-method-panel{padding:18px}}

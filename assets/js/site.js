@@ -41,7 +41,22 @@
       const prev = e.target.closest('[data-prev]');
       if (next) {
         const current = steps[index];
-        const invalid = [...current.querySelectorAll('input,select,textarea')].find(el => !el.checkValidity());
+        if (current.dataset.stepName === 'Payment') {
+          const method = current.querySelector('[name="payment_method"]')?.value;
+          if (method === 'ACH') {
+            const account = current.querySelector('[name="account_number"]');
+            const confirm = current.querySelector('[name="account_number_confirm"]');
+            if (account && confirm && account.value !== confirm.value) {
+              confirm.setCustomValidity('Account numbers do not match.');
+              confirm.reportValidity();
+              return;
+            } else if (confirm) {
+              confirm.setCustomValidity('');
+            }
+          }
+        }
+        if (current.hasAttribute('data-agreement-step') && next.disabled) return;
+        const invalid = [...current.querySelectorAll('input,select,textarea')].find(el => !el.disabled && !el.checkValidity());
         if (invalid) { invalid.reportValidity(); return; }
         index = Math.min(steps.length - 1, index + 1);
         render();
@@ -67,6 +82,85 @@
     control.addEventListener('change', update);
     update();
   });
+
+
+  document.querySelectorAll('.carrier-application-form').forEach(form => {
+    const paymentMethod = form.querySelector('[name="payment_method"]');
+    const panels = [...form.querySelectorAll('[data-payment-panel]')];
+    const achNames = ['bank_name','bank_account_holder','bank_account_type','routing_number','account_number','account_number_confirm','ach_authorization'];
+    const factoringNames = ['factoring_company'];
+    const remittanceNames = ['remittance_address','remittance_city','remittance_state','remittance_postal_code'];
+
+    const updatePaymentPanels = () => {
+      const method = paymentMethod?.value || '';
+      panels.forEach(panel => panel.hidden = panel.dataset.paymentPanel !== method);
+      achNames.forEach(name => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if (el) el.required = method === 'ACH';
+      });
+      factoringNames.forEach(name => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if (el) el.required = method === 'Factoring';
+      });
+      remittanceNames.forEach(name => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if (el) el.required = method === 'Check';
+      });
+      const confirm = form.querySelector('[name="account_number_confirm"]');
+      if (confirm) confirm.setCustomValidity('');
+    };
+    paymentMethod?.addEventListener('change', updatePaymentPanels);
+    updatePaymentPanels();
+
+    const scrollBox = form.querySelector('[data-agreement-scroll]');
+    const agreementStatus = form.querySelector('[data-agreement-status]');
+    const agreementName = form.querySelector('[name="agreement_signature_name"]');
+    const agreementTitle = form.querySelector('[name="agreement_signature_title"]');
+    const agreementAccept = form.querySelector('[name="broker_agreement_accepted"]');
+    const agreementNext = form.querySelector('[data-agreement-next]');
+    let agreementRead = false;
+
+    const updateAgreementGate = () => {
+      if (!agreementNext) return;
+      const signed = Boolean(agreementRead && agreementName?.value.trim() && agreementTitle?.value.trim() && agreementAccept?.checked);
+      agreementNext.disabled = !signed;
+    };
+
+    if (scrollBox) {
+      const checkScroll = () => {
+        const atEnd = scrollBox.scrollTop + scrollBox.clientHeight >= scrollBox.scrollHeight - 12;
+        if (atEnd && !agreementRead) {
+          agreementRead = true;
+          [agreementName, agreementTitle, agreementAccept].forEach(el => { if (el) el.disabled = false; });
+          if (agreementStatus) {
+            agreementStatus.classList.add('ready');
+            agreementStatus.innerHTML = '<span class="lock-dot">●</span> Agreement reviewed. Complete the electronic signature to continue.';
+          }
+          updateAgreementGate();
+        }
+      };
+      scrollBox.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+    }
+    [agreementName, agreementTitle].forEach(el => el?.addEventListener('input', updateAgreementGate));
+    agreementAccept?.addEventListener('change', updateAgreementGate);
+  });
+
+  async function invokeCarrierSecure(body) {
+    if (!config.carrierSecureFunctionUrl || !config.publishableKey) throw new Error('The secure carrier payment service is not configured.');
+    const res = await fetch(config.carrierSecureFunctionUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': config.publishableKey,
+        'Authorization': `Bearer ${config.publishableKey}`
+      },
+      body: JSON.stringify(body)
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok || json.error) throw new Error(json.error || 'Secure carrier details could not be saved.');
+    return json;
+  }
 
   function formPayload(form) {
     const fd = new FormData(form);
@@ -173,6 +267,21 @@
       const submit = form.querySelector('[type="submit"]');
       const action = form.dataset.ntaAction;
       const payload = { action, ...formPayload(form) };
+      let carrierSecurePayload = null;
+      if (action === 'carrier_apply') {
+        const secureKeys = [
+          'payment_method','payee_name','remittance_email','remittance_address','remittance_city','remittance_state','remittance_postal_code',
+          'bank_name','bank_account_holder','bank_account_type','routing_number','account_number','account_number_confirm','ach_authorization',
+          'factoring_company','factoring_contact_name','factoring_email','factoring_phone',
+          'agreement_version','agreement_signature_name','agreement_signature_title'
+        ];
+        carrierSecurePayload = {};
+        secureKeys.forEach(key => {
+          if (Object.prototype.hasOwnProperty.call(payload, key)) carrierSecurePayload[key] = payload[key];
+          delete payload[key];
+        });
+        carrierSecurePayload.broker_agreement_accepted = payload.broker_agreement_accepted === true;
+      }
 
       // Preserve credit-application fields that are more detailed than the
       // base shipper profile schema inside the existing notes field.
@@ -217,6 +326,13 @@
         const result = await invoke(payload);
 
         if (action === 'carrier_apply') {
+          if (status) status.textContent = 'Securing payment information and agreement signature…';
+          await invokeCarrierSecure({
+            application_id: result.id,
+            upload_token: result.upload_token,
+            ...carrierSecurePayload
+          });
+
           const fileInputs = [...form.querySelectorAll('input[type="file"]')];
           let uploaded = 0;
           for (const input of fileInputs) {
