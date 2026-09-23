@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#061A36">
+<title>Shipper Credit Application | NTA Logistics</title>
+<meta name="description" content="Apply for a shipper credit account with NTA Logistics LLC and establish your company for freight brokerage services.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+<div class="topbar"><div class="container topbar-inner"><span>Freight Brokerage • Construction Hauling • Transportation Coordination</span><div><a href="tel:8036290227">803-629-0227</a><span class="dot">•</span><a href="contact.html">Contact NTA</a></div></div></div>
+<header class="site-header"><div class="container nav"><a class="brand" href="index.html" aria-label="NTA Logistics home"><img src="assets/images/nta-logistics-logo4.png" alt="NTA Logistics LLC"></a><nav class="desktop-nav" aria-label="Primary navigation"><a href="services.html">Services</a><a href="shippers.html" class="active">Shippers</a><a href="carriers.html">Carriers</a><a href="industries.html">Industries</a><a href="about.html">About</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a></nav><div class="nav-actions"><a class="btn btn-ghost" href="carrier-onboarding.html">Carrier Setup</a><a class="btn btn-gold" href="request-quote.html">Request a Quote</a></div><button class="menu-toggle" aria-expanded="false" aria-label="Toggle navigation">☰</button></div><nav class="mobile-menu" aria-label="Mobile navigation"><a href="services.html">Services</a><a href="shippers.html">Shippers</a><a href="carriers.html">Carriers</a><a href="industries.html">Industries</a><a href="about.html">About</a><a href="blog.html">Blog</a><a href="contact.html">Contact</a><a href="shipper-onboarding.html">Shipper Credit Application</a><a href="carrier-onboarding.html">Carrier Onboarding</a><a class="btn btn-gold" href="request-quote.html">Request a Quote</a></nav></header>
+
+<main id="main">
+<section class="page-hero image-hero shipper-onboarding-hero form-hero">
+  <div class="container page-hero-copy">
+    <span class="eyebrow light">New Shipper Setup</span>
+    <h1>Shipper Credit Application.</h1>
+    <p>Apply to establish a business credit account with NTA Logistics LLC for freight brokerage and transportation services. Complete the application once, then access the NTA shipper document package after submission.</p>
+    <div class="hero-actions"><a class="btn btn-gold" href="#credit-application">Start Credit Application</a><a class="btn btn-light" href="tel:8036290227">Questions? 803-629-0227</a></div>
+  </div>
+</section>
+
+<section class="credit-intro section soft">
+  <div class="container">
+    <div class="credit-intro-grid">
+      <div><span class="section-kicker">Before You Begin</span><h2>One application establishes your shipper profile.</h2><p class="lead">NTA uses this information to identify your company, establish billing contacts, understand expected freight activity, and evaluate requested credit terms.</p></div>
+      <div class="credit-checklist-card">
+        <h3>Have this information ready</h3>
+        <ul class="check-list"><li>Legal company and tax information</li><li>Accounts payable and invoicing contacts</li><li>Requested credit amount and payment terms</li><li>Typical freight volume and equipment needs</li><li>Three business / trade references</li><li>Authorized signer information</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section form-section" id="credit-application">
+<div class="container">
+  <div class="form-context credit-context">
+    <div><b>Secure online application</b><span>Your application is sent through NTA's existing intake service.</span></div>
+    <div><b>Credit review</b><span>Submission is an application and does not by itself guarantee credit approval.</span></div>
+    <div><b>Already approved?</b><a href="request-quote.html">Request a freight quote →</a></div>
+  </div>
+
+  <form class="form-shell credit-form" data-multistep data-nta-action="shipper_setup" data-success-redirect="shipper-package.html" novalidate>
+    <div class="form-header">
+      <div class="form-header-row"><div><span class="credit-form-label">NTA LOGISTICS LLC</span><h2>Shipper Credit Application</h2><p>Complete all required fields marked with an asterisk.</p></div><div class="credit-secure-badge">BUSINESS CREDIT<br>APPLICATION</div></div>
+      <div class="progress" aria-label="Application progress"><span class="active"></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="progress-labels" aria-hidden="true"><span>Company</span><span>Billing</span><span>Credit</span><span>Freight</span><span>References</span><span>Authorize</span></div>
+    </div>
+
+    <section class="form-step active" data-step-name="Company">
+      <div class="step-heading"><span>Step 1 of 6</span><h2>Company information</h2><p>Tell us exactly who will be doing business with NTA Logistics.</p></div>
+      <div class="form-grid">
+        <div class="field full"><label for="company_name">Legal business name *</label><input id="company_name" name="company_name" autocomplete="organization" required></div>
+        <div class="field"><label for="dba">DBA / trade name</label><input id="dba" name="dba"></div>
+        <div class="field"><label for="entity_type">Business structure</label><select id="entity_type" name="entity_type"><option value="">Select</option><option>Corporation</option><option>LLC</option><option>Partnership</option><option>Sole Proprietorship</option><option>Government / Municipality</option><option>Other</option></select></div>
+        <div class="field"><label for="federal_ein">Federal EIN / Tax ID</label><input id="federal_ein" name="federal_ein" inputmode="numeric" placeholder="XX-XXXXXXX"></div>
+        <div class="field"><label for="years_in_business">Years in business</label><input id="years_in_business" name="years_in_business" type="number" min="0" step="1"></div>
+        <div class="field"><label for="state_organized">State organized / incorporated</label><input id="state_organized" name="state_organized" maxlength="80"></div>
+        <div class="field"><label for="website">Website</label><input id="website" name="website" type="url" placeholder="https://"></div>
+        <div class="field full"><label for="physical_address">Physical business address *</label><input id="physical_address" name="physical_address" autocomplete="street-address" required></div>
+        <div class="field"><label for="physical_city">City *</label><input id="physical_city" name="physical_city" autocomplete="address-level2" required></div>
+        <div class="field"><label for="physical_state">State *</label><input id="physical_state" name="physical_state" autocomplete="address-level1" maxlength="80" required></div>
+        <div class="field"><label for="physical_postal_code">ZIP / postal code *</label><input id="physical_postal_code" name="physical_postal_code" autocomplete="postal-code" required></div>
+        <div class="field"><label for="physical_country">Country</label><input id="physical_country" name="physical_country" value="United States" autocomplete="country-name"></div>
+      </div>
+      <div class="form-actions"><span></span><button class="btn btn-gold" type="button" data-next>Continue to Contacts</button></div>
+    </section>
+
+    <section class="form-step" data-step-name="Billing">
+      <div class="step-heading"><span>Step 2 of 6</span><h2>Primary & accounts payable contacts</h2><p>Provide the people NTA should contact for operations, billing, and invoicing.</p></div>
+      <div class="credit-subhead">Primary business contact</div>
+      <div class="form-grid">
+        <div class="field"><label for="primary_contact_name">Contact name *</label><input id="primary_contact_name" name="primary_contact_name" autocomplete="name" required></div>
+        <div class="field"><label for="primary_contact_title">Title / position</label><input id="primary_contact_title" name="primary_contact_title"></div>
+        <div class="field"><label for="primary_contact_email">Email *</label><input id="primary_contact_email" name="primary_contact_email" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="primary_contact_phone">Phone *</label><input id="primary_contact_phone" name="primary_contact_phone" type="tel" autocomplete="tel" required></div>
+      </div>
+      <div class="credit-subhead">Accounts payable / invoicing</div>
+      <div class="form-grid">
+        <div class="field"><label for="billing_contact_name">AP contact name</label><input id="billing_contact_name" name="billing_contact_name"></div>
+        <div class="field"><label for="billing_contact_email">AP email</label><input id="billing_contact_email" name="billing_contact_email" type="email"></div>
+        <div class="field"><label for="billing_contact_phone">AP phone</label><input id="billing_contact_phone" name="billing_contact_phone" type="tel"></div>
+        <div class="field"><label for="invoicing_email">Invoice delivery email</label><input id="invoicing_email" name="invoicing_email" type="email"></div>
+        <div class="field full check-field"><label><input type="checkbox" name="billing_same_as_physical" value="true" checked data-toggle-target="#billing-address-fields" data-toggle-invert="true"><span>Billing address is the same as the physical address.</span></label></div>
+        <div class="conditional-grid" id="billing-address-fields" hidden>
+          <div class="field full"><label for="billing_address">Billing address</label><input id="billing_address" name="billing_address" data-conditional-required="true"></div>
+          <div class="field"><label for="billing_city">City</label><input id="billing_city" name="billing_city" data-conditional-required="true"></div>
+          <div class="field"><label for="billing_state">State</label><input id="billing_state" name="billing_state" data-conditional-required="true"></div>
+          <div class="field"><label for="billing_postal_code">ZIP / postal code</label><input id="billing_postal_code" name="billing_postal_code" data-conditional-required="true"></div>
+          <div class="field"><label for="billing_country">Country</label><input id="billing_country" name="billing_country" value="United States"></div>
+        </div>
+      </div>
+      <div class="form-actions"><button class="btn btn-outline" type="button" data-prev>Back</button><button class="btn btn-gold" type="button" data-next>Continue to Credit Request</button></div>
+    </section>
+
+    <section class="form-step" data-step-name="Credit">
+      <div class="step-heading"><span>Step 3 of 6</span><h2>Credit request & billing preferences</h2><p>Tell NTA what level of open-account credit you expect to need.</p></div>
+      <div class="form-grid">
+        <div class="field"><label for="requested_credit_limit">Requested credit limit</label><input id="requested_credit_limit" name="requested_credit_limit" type="number" min="0" step="100" placeholder="$25,000"></div>
+        <div class="field"><label for="requested_payment_terms">Requested payment terms</label><select id="requested_payment_terms" name="requested_payment_terms"><option value="">Select requested terms</option><option>Net 15</option><option>Net 30</option><option>Other / discuss with NTA</option></select></div>
+        <div class="field"><label for="estimated_monthly_spend">Estimated monthly freight spend</label><input id="estimated_monthly_spend" name="estimated_monthly_spend" type="number" min="0" step="100"></div>
+        <div class="field"><label for="purchase_order_policy">Purchase order process</label><select id="purchase_order_policy" name="purchase_order_policy"><option value="No PO required">No PO required</option><option value="PO required for all loads">PO required for all loads</option><option value="PO required for certain projects">PO required for certain projects</option></select></div>
+        <div class="field full check-field"><label><input type="checkbox" name="po_required" value="true"><span>Our company requires a PO number on freight invoices.</span></label></div>
+        <div class="field full"><label for="special_billing_instructions">Special invoicing / billing instructions</label><textarea id="special_billing_instructions" name="special_billing_instructions" placeholder="Invoice portal requirements, project numbers, backup documents, billing contacts, etc."></textarea></div>
+      </div>
+      <div class="secure-note"><strong>Banking information is not requested on this public application.</strong> If NTA needs additional financial verification, it can be handled separately through an approved secure process.</div>
+      <div class="form-actions"><button class="btn btn-outline" type="button" data-prev>Back</button><button class="btn btn-gold" type="button" data-next>Continue to Freight Profile</button></div>
+    </section>
+
+    <section class="form-step" data-step-name="Freight">
+      <div class="step-heading"><span>Step 4 of 6</span><h2>Freight & shipping profile</h2><p>Help NTA understand the transportation activity this account is expected to support.</p></div>
+      <div class="form-grid">
+        <div class="field"><label for="industry">Industry</label><input id="industry" name="industry" placeholder="Construction, manufacturing, aggregate supplier, etc."></div>
+        <div class="field"><label for="average_monthly_loads">Estimated monthly loads</label><input id="average_monthly_loads" name="average_monthly_loads" type="number" min="0" step="1"></div>
+        <div class="field"><label for="annual_shipments">Estimated annual shipments</label><input id="annual_shipments" name="annual_shipments" type="number" min="0" step="1"></div>
+        <div class="field"><label for="shipping_modes">Primary shipping modes</label><input id="shipping_modes" name="shipping_modes" placeholder="FTL, LTL, dump, flatbed, expedited..."></div>
+        <div class="field full"><label for="commodities">Typical commodities / materials</label><textarea id="commodities" name="commodities" placeholder="Describe the freight or materials NTA would typically coordinate for your company."></textarea></div>
+        <div class="field full"><label for="typical_equipment">Typical equipment requirements</label><input id="typical_equipment" name="typical_equipment" placeholder="Dry van, flatbed, dump truck, end dump, reefer, specialized equipment..."></div>
+        <div class="field full"><label for="service_regions">Primary origins, destinations, lanes, or service regions</label><textarea id="service_regions" name="service_regions" placeholder="States, metro areas, jobsite regions, recurring lanes, etc."></textarea></div>
+      </div>
+      <div class="form-actions"><button class="btn btn-outline" type="button" data-prev>Back</button><button class="btn btn-gold" type="button" data-next>Continue to References</button></div>
+    </section>
+
+    <section class="form-step" data-step-name="References">
+      <div class="step-heading"><span>Step 5 of 6</span><h2>Business / trade references</h2><p>Provide companies that can verify your organization's commercial payment history. Freight, transportation, supplier, or other open-account references are appropriate.</p></div>
+      <div class="reference-card"><div class="reference-number-box">01</div><div class="form-grid"><div class="field"><label>Company name</label><input name="trade_reference_1_company"></div><div class="field"><label>Contact name</label><input name="trade_reference_1_contact"></div><div class="field"><label>Email</label><input name="trade_reference_1_email" type="email"></div><div class="field"><label>Phone</label><input name="trade_reference_1_phone" type="tel"></div></div></div>
+      <div class="reference-card"><div class="reference-number-box">02</div><div class="form-grid"><div class="field"><label>Company name</label><input name="trade_reference_2_company"></div><div class="field"><label>Contact name</label><input name="trade_reference_2_contact"></div><div class="field"><label>Email</label><input name="trade_reference_2_email" type="email"></div><div class="field"><label>Phone</label><input name="trade_reference_2_phone" type="tel"></div></div></div>
+      <div class="reference-card"><div class="reference-number-box">03</div><div class="form-grid"><div class="field"><label>Company name</label><input name="trade_reference_3_company"></div><div class="field"><label>Contact name</label><input name="trade_reference_3_contact"></div><div class="field"><label>Email</label><input name="trade_reference_3_email" type="email"></div><div class="field"><label>Phone</label><input name="trade_reference_3_phone" type="tel"></div></div></div>
+      <div class="form-actions"><button class="btn btn-outline" type="button" data-prev>Back</button><button class="btn btn-gold" type="button" data-next>Review & Authorize</button></div>
+    </section>
+
+    <section class="form-step" data-step-name="Authorize">
+      <div class="step-heading"><span>Step 6 of 6</span><h2>Authorization & certification</h2><p>An authorized representative must certify the application before submission.</p></div>
+      <div class="credit-terms-card">
+        <h3>Credit application authorization</h3>
+        <p>By submitting this application, the applicant certifies that the information provided is true and complete to the best of its knowledge and that the signer is authorized to submit this application on behalf of the company.</p>
+        <p>The applicant authorizes NTA Logistics LLC and its authorized representatives to verify business and trade references and to obtain information reasonably necessary to evaluate the requested commercial credit relationship. Submission of this application does not guarantee approval or establish a specific credit limit or payment term. Approved terms, if any, will be communicated separately by NTA Logistics LLC.</p>
+      </div>
+      <div class="form-grid">
+        <div class="field"><label for="signature_name">Authorized signer full name *</label><input id="signature_name" name="signature_name" required></div>
+        <div class="field"><label for="signature_title">Title / position *</label><input id="signature_title" name="signature_title" required></div>
+        <div class="field"><label for="signature_email">Signer email</label><input id="signature_email" name="signature_email" type="email"></div>
+        <div class="field"><label for="application_date">Application date</label><input id="application_date" name="application_date" type="date"></div>
+        <div class="field full check-field authorization-check"><label><input type="checkbox" name="certification_accepted" value="true" required><span><strong>I certify and authorize this Shipper Credit Application.</strong> I am authorized to submit this application for the company identified above and authorize NTA Logistics LLC to verify the business information and references provided.</span></label></div>
+      </div>
+      <textarea name="notes" hidden data-credit-notes></textarea>
+      <div class="secure-note">After a successful submission, you will be sent to <strong>shipper-package.html</strong>, where the NTA shipper document package will be available.</div>
+      <div class="form-actions"><button class="btn btn-outline" type="button" data-prev>Back</button><button class="btn btn-gold btn-lg" type="submit">Submit Credit Application</button></div>
+      <div class="status" role="status" aria-live="polite"></div>
+    </section>
+  </form>
+</div>
+</section>
+
+<section class="cta-band"><div class="container cta-inner"><div><h2>Questions before applying?</h2><p>Call NTA Logistics and we can walk through shipper setup with you.</p></div><a class="btn btn-gold" href="tel:8036290227">Call 803-629-0227</a></div></section>
+</main>
+
+<footer class="site-footer"><div class="container footer-grid"><div class="footer-brand"><img src="assets/images/nta-logistics-logo4.png" alt="NTA Logistics LLC"><p>Professional freight brokerage connecting dependable carriers with businesses that need reliable transportation solutions.</p><a class="footer-phone" href="tel:8036290227">803-629-0227</a></div><div class="footer-col"><h4>Shippers</h4><a href="shippers.html">Shipper Services</a><a href="request-quote.html">Request a Quote</a><a href="shipper-onboarding.html">Shipper Credit Application</a><a href="shipper-package.html">Shipper Package</a><a href="industries.html">Industries We Serve</a></div><div class="footer-col"><h4>Carriers</h4><a href="carriers.html">Carrier Network</a><a href="carrier-onboarding.html">Carrier Onboarding</a><a href="services.html">Freight Services</a><a href="contact.html">Contact Operations</a></div><div class="footer-col"><h4>Company</h4><a href="about.html">About NTA</a><a href="blog.html">Blog & Resources</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div></div><div class="container footer-bottom"><span>© <span data-year></span> NTA Logistics LLC. All rights reserved.</span><span>Freight brokerage • Carrier coordination • Commercial transportation</span></div></footer>
+<div class="mobile-cta"><a class="btn btn-primary" href="request-quote.html">REQUEST A QUOTE</a><a class="btn btn-gold" href="tel:8036290227">CALL NTA</a></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="assets/js/nta-supabase.js"></script>
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

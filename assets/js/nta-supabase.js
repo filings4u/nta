@@ -2,7 +2,9 @@ window.NTA_CONFIG = Object.freeze({
   supabaseUrl: "https://wwnwelahpiyshhueitlj.supabase.co",
   publishableKey: "sb_publishable_zO_MwLNLhks3hSlcMw8C0A_5c-9jXfM",
   functionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-public-intake",
-  carrierBucket: "nta-carrier-documents"
+  carrierBucket: "NTA_logistics",
+  storageFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-storage",
+  notifyFunctionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-form-notify"
 });
 
 window.NTASupabase = window.supabase?.createClient
