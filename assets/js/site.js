@@ -552,20 +552,4 @@
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
   }
-
-  const postsRoot = document.querySelector('[data-blog-posts]');
-  if (postsRoot) {
-    fetch('content/posts.json').then(r => r.json()).then(posts => {
-      const postImages = {
-        'Shippers': 'assets/images/shippers-hero.webp',
-        'Carriers': 'assets/images/carriers-hero.webp',
-        'Construction Logistics': 'assets/images/index-hero.webp'
-      };
-      postsRoot.innerHTML = posts.map(p => `
-        <article class="post-card">
-          <div class="thumb" style="background-image:url('${postImages[p.category] || 'assets/images/blog-hero.webp'}')"><span>${escapeHtml(p.category)}</span></div>
-          <div class="body"><small>${escapeHtml(p.category)} · ${escapeHtml(p.publish_date)}</small><h3>${escapeHtml(p.title)}</h3><p>${escapeHtml(p.excerpt)}</p>${String(p.publish_date).toLowerCase() === 'draft' ? '<span class="draft-label">Article coming soon</span>' : `<a href="${encodeURI(p.slug)}.html">Read article →</a>`}</div>
-        </article>`).join('');
-    }).catch(() => {});
-  }
 })();
