@@ -268,7 +268,7 @@
   .cta-inner h2{font-size:2.5rem}
 
   /* Main footer: 4 sections in a 2 x 2 grid */
-  .site-footer{padding:50px 0 90px}
+  .site-footer{padding:50px 0 16px}
   .site-footer .footer-grid{
     grid-template-columns:repeat(2,minmax(0,1fr))!important;
     gap:30px 18px;
@@ -395,5 +395,32 @@
   }
   .footer-legal-links a{
     font-size:.66rem;
+  }
+}
+
+
+/* Mobile footer final alignment */
+@media(max-width:780px){
+  .site-footer{
+    padding-bottom:16px!important;
+  }
+
+  .footer-bottom{
+    align-items:center!important;
+    text-align:center!important;
+    gap:8px!important;
+    margin-top:24px!important;
+    padding-top:16px!important;
+  }
+
+  .footer-bottom>span:first-child{
+    width:100%;
+    text-align:center!important;
+  }
+
+  .footer-legal-links{
+    width:100%!important;
+    justify-content:center!important;
+    gap:14px!important;
   }
 }
