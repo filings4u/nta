@@ -337,3 +337,63 @@
   .form-header{padding:20px 15px}
   .form-step,.credit-form .form-step{padding:20px 14px!important}
 }
+
+
+/* Mobile footer copyright + legal links correction */
+@media(max-width:780px){
+  .footer-bottom{
+    display:flex!important;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:9px;
+  }
+
+  .footer-bottom>span:first-child{
+    display:block!important;
+    margin:0!important;
+    white-space:nowrap;
+    font-size:.74rem;
+    line-height:1.4;
+  }
+
+  /* Prevent the nested year span from becoming a block */
+  .footer-bottom>span:first-child span,
+  .footer-bottom [data-year]{
+    display:inline!important;
+    margin:0!important;
+  }
+
+  .footer-legal-links{
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    align-items:center;
+    justify-content:flex-start;
+    gap:14px;
+    margin:0!important;
+    width:100%;
+  }
+
+  .footer-legal-links a{
+    display:inline-block!important;
+    width:auto!important;
+    padding:0!important;
+    margin:0!important;
+    white-space:nowrap;
+    font-size:.70rem;
+    line-height:1.35;
+  }
+}
+
+/* Only allow the copyright sentence to wrap on very narrow devices */
+@media(max-width:330px){
+  .footer-bottom>span:first-child{
+    white-space:normal;
+  }
+  .footer-legal-links{
+    gap:9px;
+  }
+  .footer-legal-links a{
+    font-size:.66rem;
+  }
+}
