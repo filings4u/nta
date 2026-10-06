@@ -18,12 +18,57 @@
   function showApp(){ $('#adminAuth').hidden=true; $('#adminApp').hidden=false; $('#adminUserName').textContent=state.admin?.display_name||'Administrator'; $('#adminUserEmail').textContent=state.session?.user?.email||''; }
   async function boot(){
     const {data:{session}}=await sb.auth.getSession();state.session=session;if(!session){showAuth();return;}
-    try{const me=await api('me');state.admin=me.admin;showApp();await Promise.all([loadDashboard(),loadTasks(),loadPosts(),loadTaxonomy(),loadMedia()]);}
-    catch(e){showAuth();statusBox(e.message,'error');}
+    try{
+      let me;
+      try{me=await api('me');}
+      catch(err){
+        const email=String(session.user?.email||'').toLowerCase();
+        const message=String(err?.message||'');
+        if(email.endsWith('@ntalog.net') && /administrator access required/i.test(message)){
+          const displayName=String(session.user?.user_metadata?.display_name||email.split('@')[0]||'NTA Administrator');
+          await api('bootstrap_admin',{display_name:displayName});
+          me=await api('me');
+        }else throw err;
+      }
+      state.admin=me.admin;showApp();await Promise.all([loadDashboard(),loadTasks(),loadPosts(),loadTaxonomy(),loadMedia()]);
+    }
+    catch(e){await sb.auth.signOut();showAuth();statusBox(e.message,'error');}
   }
-  $$('.auth-tabs button').forEach(b=>b.addEventListener('click',()=>{const setup=b.dataset.authTab==='setup';$('#signinForm').hidden=setup;$('#setupForm').hidden=!setup;$$('.auth-tabs button').forEach(x=>x.classList.toggle('btn-primary',x===b));}));
-  $('#signinForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget);const {error}=await sb.auth.signInWithPassword({email:f.get('email'),password:f.get('password')});if(error){statusBox(error.message,'error');return;}location.reload();});
-  $('#setupForm').addEventListener('submit',async e=>{e.preventDefault();const f=new FormData(e.currentTarget),email=String(f.get('email')).toLowerCase();if(!email.endsWith('@ntalog.net')){statusBox('Use an @ntalog.net email address.','error');return;}const {data:{session:existing}}=await sb.auth.getSession();if(existing){if(String(existing.user.email||'').toLowerCase()!==email){statusBox('You are signed in with a different email. Sign out first or use the signed-in NTA email.','error');return;}try{await api('bootstrap_admin',{display_name:f.get('display_name')});location.reload();}catch(err){statusBox(err.message,'error');}return;}const {data,error}=await sb.auth.signUp({email,password:f.get('password'),options:{data:{display_name:f.get('display_name')}}});if(error){statusBox(error.message,'error');return;}if(!data.session){statusBox('Account created. Confirm the email, then return here and sign in. After signing in, open First Admin Setup again to claim the administrator role.');return;}try{await api('bootstrap_admin',{display_name:f.get('display_name')});location.reload();}catch(err){statusBox(err.message,'error');}});
+  $('#signinForm').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const form=e.currentTarget, f=new FormData(form), email=String(f.get('email')||'').trim().toLowerCase();
+    const submit=form.querySelector('button[type="submit"]');
+    if(submit){submit.disabled=true;submit.textContent='Signing In…';}
+    statusBox('Signing in…');
+    const {data,error}=await sb.auth.signInWithPassword({email,password:f.get('password')});
+    if(error){statusBox(error.message,'error');if(submit){submit.disabled=false;submit.textContent='Sign In';}return;}
+    state.session=data.session||null;
+    try{
+      await api('me');
+    }catch(err){
+      const message=String(err?.message||'');
+      if(email.endsWith('@ntalog.net') && /administrator access required/i.test(message)){
+        const displayName=String(data.user?.user_metadata?.display_name||email.split('@')[0]||'NTA Administrator');
+        try{await api('bootstrap_admin',{display_name:displayName});}
+        catch(claimErr){
+          const claimMessage=String(claimErr?.message||'');
+          if(!/already been completed/i.test(claimMessage)){
+            await sb.auth.signOut();
+            statusBox(claimMessage||'Administrator access is not configured for this account.','error');
+            if(submit){submit.disabled=false;submit.textContent='Sign In';}
+            return;
+          }
+        }
+      }else{
+        await sb.auth.signOut();
+        statusBox(message||'Administrator access is not configured for this account.','error');
+        if(submit){submit.disabled=false;submit.textContent='Sign In';}
+        return;
+      }
+    }
+    location.reload();
+  });
+  $('[data-password-toggle]')?.addEventListener('click',e=>{const btn=e.currentTarget,input=document.getElementById(btn.dataset.passwordToggle);if(!input)return;const show=input.type==='password';input.type=show?'text':'password';btn.setAttribute('aria-pressed',String(show));btn.setAttribute('aria-label',show?'Hide password':'Show password');});
   $('#signOutBtn').addEventListener('click',async()=>{await sb.auth.signOut();location.reload();});
   function activate(name){$$('[data-admin-panel]').forEach(b=>b.classList.toggle('active',b.dataset.adminPanel===name));$$('.admin-panel').forEach(p=>p.classList.toggle('active',p.dataset.panel===name));if(name==='crm')loadCrm();if(name==='blog')renderPosts();if(name==='media')renderMedia();if(name==='categories')renderCategories();if(name==='team')loadTeam();}
   $$('[data-admin-panel]').forEach(b=>b.addEventListener('click',()=>activate(b.dataset.adminPanel)));
