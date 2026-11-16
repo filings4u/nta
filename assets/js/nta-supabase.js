@@ -1,8 +1,8 @@
 window.NTA_CONFIG = Object.freeze({
   siteUrl: "https://ntalog.net/",
-  adminUrl: "https://ntalog.net/admin.html",
-  forgotPasswordUrl: "https://ntalog.net/forgot-password.html",
-  resetPasswordUrl: "https://ntalog.net/reset-password.html",
+  adminUrl: "https://admin.ntalog.net/",
+  forgotPasswordUrl: "https://admin.ntalog.net/forgot-password.html",
+  resetPasswordUrl: "https://admin.ntalog.net/reset-password.html",
   supabaseUrl: "https://wwnwelahpiyshhueitlj.supabase.co",
   publishableKey: "sb_publishable_zO_MwLNLhks3hSlcMw8C0A_5c-9jXfM",
   functionUrl: "https://wwnwelahpiyshhueitlj.supabase.co/functions/v1/nta-public-intake",
