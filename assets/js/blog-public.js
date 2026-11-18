@@ -4,12 +4,12 @@
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const date=v=>v?new Date(v).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}):'';
   const starterImages={
-    'how-to-choose-the-right-equipment-for-a-freight-shipment':'assets/images/services-hero.webp',
-    'planning-multi-load-and-jobsite-transportation':'assets/images/industries-hero.webp',
-    'carrier-onboarding-what-brokers-need-before-tendering-freight':'assets/images/carriers-hero.webp',
-    'what-information-helps-a-freight-quote-move-faster':'assets/images/shippers-hero.webp'
+    'how-to-choose-the-right-equipment-for-a-freight-shipment':'https://images.unsplash.com/photo-1686246668933-7425658394b0?auto=format&fit=crop&w=1000&q=82',
+    'planning-multi-load-and-jobsite-transportation':'https://images.unsplash.com/photo-1751054619908-65d27a503ce8?auto=format&fit=crop&w=1000&q=82',
+    'carrier-onboarding-what-brokers-need-before-tendering-freight':'https://images.unsplash.com/photo-1766785368863-f2188a8c8b32?auto=format&fit=crop&w=1000&q=82',
+    'what-information-helps-a-freight-quote-move-faster':'https://images.unsplash.com/photo-1696069360639-a1124ce8f7ec?auto=format&fit=crop&w=1000&q=82'
   };
-  const postImage=p=>p?.featured_image_url||starterImages[p?.slug]||'assets/images/blog-hero.webp';
+  const postImage=p=>p?.featured_image_url||starterImages[p?.slug]||'https://images.unsplash.com/photo-1720127601642-7c3a7ba88f5f?auto=format&fit=crop&w=1000&q=82';
   async function get(params=''){
     const r=await fetch(`${cfg.blogFunctionUrl}${params}`);
     const j=await r.json().catch(()=>({}));
