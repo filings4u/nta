@@ -24,3 +24,7 @@ The approved NTA Logistics logo is under `assets/images/nta-logistics-logo.png`.
 - Add the official business email when provided.
 - Confirm actual service territory before publishing coverage claims.
 - The included `admin-cms.html` remains a frontend scaffold and should not be publicly exposed until authenticated CMS administration is implemented.
+
+
+## Blog content
+The public blog now loads published posts exclusively from the Supabase CMS. The old sample `content/posts.json` feed has been removed.
